@@ -49,9 +49,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/download/index', [SalesController::class, 'printPDF'])->name('sales.print');
     Route::get('/download/index', [SalesController::class, 'print'])->name('sales.print');
     
-    // Route::get('/download', function () {
-    //     return view('download.index');
-    // });
+    Route::get('/export-sales', [SalesController::class, 'exportSales'])->name('sales.export');
+    Route::get('/rekap', [SalesController::class, 'rekap'])->name('sales.rekap');
         
         
     // Route::get('/sales/pdf', [SalesController::class, 'printPDF'])->name('sales.printPDF');

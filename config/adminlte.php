@@ -333,11 +333,7 @@ return [
             'url' => 'profile',
             'icon' => 'fas fa-fw fa-user',
         ],
-        // [
-        //     'text' => 'Data Produk',
-        //     'url' => 'produk',
-        //     'icon' => 'fas fa-fw fa-lock',
-        // ],
+   
         [
             'text' => 'Gudang',
             'icon' => 'fas fa-fw fa-box',
@@ -361,43 +357,33 @@ return [
             'icon' => 'fas fa-fw  fa-shopping-cart',
             'submenu' => [
                 [
-                    'text' => 'Fix Kirim',
+                    'text' => ' Fix Kirim',
                     'url' => 'sales',
                     'icon' => 'fas fa-fw fa-paper-plane',
 
                 ],
                 [
-                    'text' => 'Rekap Harian',
-                    'url' => 'Penjualan',
+                    'text' => ' Rekap Harian',
+                    'url' => 'rekap',
                     'icon' => 'fas fa-fw fa-list',
 
                 ],
                 [
-                    'text' => 'Berita Acara Pengiriman',
+                    'text' => ' Berita Acara Pengiriman',
                     'url' => 'resi',
                     'icon' => 'fas fa-fw fa-sticky-note',
 
                 ],
+        
+           
                 [
-                    'text' => 'Cetak Resi',
-                    'url' => 'resi',
-                    'icon' => 'fas fa-fw fa-print',
-
-                ],
-                [
-                    'text' => 'Report Harian',
-                    'url' => 'resi',
-                    'icon' => 'fas fa-fw fa-box',
-
-                ],
-                [
-                    'text' => 'Report Mingguan',
+                    'text' => ' Report Mingguan',
                     'url' => 'resi',
                     'icon' => 'fas fa-fw fa-paperclip',
 
                 ],
                 [
-                    'text' => 'Download',
+                    'text' => ' Download/Print',
                     'url' => 'download',
                     'icon' => 'fas fa-fw fa-download',
 
