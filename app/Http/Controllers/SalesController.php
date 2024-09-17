@@ -200,14 +200,14 @@ class SalesController extends Controller
     public function rekap()
     {
         // Rekap jumlah produk berdasarkan tgl_kirim_fix
-        $produkPerTglKirim = Sale::where('produks', '!=', 'Ongkir')
-            ->select('tgl_kirim_fix', DB::raw('SUM(jumlah) as total_produk'))
-            ->groupBy('tgl_kirim_fix')
-            ->orderBy('tgl_kirim_fix', 'asc')
+        $produkPerTglKirim = Sale::where('produk', '!=', 'Ongkir')
+            ->select('produk','batch','tgl_kirim_fix', DB::raw('SUM(jumlah) as total_produk'))
+            ->groupBy('produk','batch','tgl_kirim_fix')
+            ->orderBy('tgl_kirim_fix', 'desc')
             ->get();
 
         // Rekap jumlah produk berdasarkan 10 tanggal terakhir
-        $last10Dates = Sale::where('produks', '!=', 'Ongkir')
+        $last10Dates = Sale::where('produk', '!=', 'Ongkir')
             ->orderBy('tgl_kirim_fix', 'desc')
             ->take(10)
             ->get()
@@ -217,7 +217,7 @@ class SalesController extends Controller
             });
 
         // Rekap jumlah no_inv berdasarkan kurir
-        $rekapKurir = Sale::where('produks', '!=', 'Ongkir')
+        $rekapKurir = Sale::where('produk', '!=', 'Ongkir')
             ->select('kurir', DB::raw('COUNT(no_inv) as total_no_inv'))
             ->groupBy('kurir')
             ->get();

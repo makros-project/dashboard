@@ -8,22 +8,28 @@
 
 <body>
 
-<div class="container mt-5">
-    <h1>Rekap Sales</h1>
+<div class="container card mt-2">
+   
 
     <!-- Rekap Produk berdasarkan Tanggal Kirim -->
-    <h2 class="mt-4">Jumlah Produk Berdasarkan Tanggal Kirim</h2>
-    <table class="table table-bordered">
+    <h2 class="">Rekap Produk harian</h2>
+    <table class="table table-sm table-bordered table-striped">
         <thead>
             <tr>
-                <th>Tanggal Kirim</th>
+                <th>#</th>
+                <th>Tgl Packing</th>
+                <th>Batch</th>
+                <th>Produk</th>
                 <th>Total Produk</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($produkPerTglKirim as $rekap)
                 <tr>
+                    <td>{{ $loop->iteration }}</td>
                     <td>{{ $rekap->tgl_kirim_fix }}</td>
+                    <td>{{ $rekap->batch }}</td>
+                    <td>{{ $rekap->produk }}</td>
                     <td>{{ $rekap->total_produk }}</td>
                 </tr>
             @endforeach
@@ -31,8 +37,8 @@
     </table>
 
     <!-- Rekap Produk Berdasarkan 10 Tanggal Terakhir -->
-    <h2 class="mt-4">Jumlah Produk Berdasarkan 10 Tanggal Terakhir</h2>
-    <table class="table table-bordered">
+    <h2 class="mt-4">Rekap Produk 10 Tanggal Terakhir</h2>
+    <table class="table table-sm table-bordered table-striped">
         <thead>
             <tr>
                 <th>Tanggal Kirim</th>
@@ -50,8 +56,8 @@
     </table>
 
     <!-- Rekap Jumlah No Invoice Berdasarkan Kurir -->
-    <h2 class="mt-4">Jumlah No Invoice Berdasarkan Kurir</h2>
-    <table class="table table-bordered">
+    <h2 class="mt-4">Rekap Produk perKurir</h2>
+    <table class="table table-sm table-bordered table-striped">
         <thead>
             <tr>
                 <th>Kurir</th>
