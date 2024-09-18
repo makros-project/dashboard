@@ -370,7 +370,7 @@ return [
                 ],
                 [
                     'text' => ' Berita Acara Pengiriman',
-                    'url' => 'resi',
+                    'url' => 'berita',
                     'icon' => 'fas fa-fw fa-sticky-note',
 
                 ],

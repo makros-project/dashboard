@@ -51,6 +51,7 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/export-sales', [SalesController::class, 'exportSales'])->name('sales.export');
     Route::get('/rekap', [SalesController::class, 'rekap'])->name('sales.rekap');
+    Route::get('/berita', [SalesController::class, 'berita'])->name('sales.berita');
         
         
     // Route::get('/sales/pdf', [SalesController::class, 'printPDF'])->name('sales.printPDF');

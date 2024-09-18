@@ -228,4 +228,34 @@ class SalesController extends Controller
             'rekapKurir' => $rekapKurir,
         ]);
     }
+
+
+    public function berita(Request $request)
+    {
+        // Ambil data dari request
+        $tgl_kirim_fix = $request->input('tgl_kirim_fix');
+        $batch = $request->input('batch');
+
+        // Query untuk mendapatkan data berdasarkan tgl_kirim_fix dan batch
+            $sales = Sale::select('no_inv','pelanggan')
+             ->where('tgl_kirim_fix', $tgl_kirim_fix)
+             ->where('batch', $batch)
+             ->where('produk', '!=', 'Ongkir')
+             ->groupBy('no_inv','pelanggan')
+             ->get();
+             
+             $sales2 = Sale::where('tgl_kirim_fix', $tgl_kirim_fix)
+             ->where('batch', $batch)
+             ->where('produk', '!=', 'Ongkir')
+             ->get();
+             
+             $kurir = Sale::select('kurir')
+                  ->where('tgl_kirim_fix', $tgl_kirim_fix)
+                  ->where('batch', $batch)
+                  ->where('produk', '!=', 'Ongkir')
+                  ->groupBy('kurir')
+                  ->get();
+             
+        return view('sales.berita', compact('kurir','sales','sales2', 'tgl_kirim_fix', 'batch'));
+    }
 }
