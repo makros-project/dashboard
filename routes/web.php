@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SalesController;
+use App\Http\Controllers\OngkirController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\KontrolProduksiController;
@@ -44,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('sales', SalesController::class);
     Route::get('/sales/{no_inv}/show', [SalesController::class, 'show'])->name('sales.show');
     Route::put('/sales/{no_inv}', [SalesController::class, 'update'])->name('sales.update');
+    Route::put('/sales/{no_inv}', [SalesController::class, 'batalfix'])->name('sales.batalfix');
 
     Route::get('download', [SalesController::class, 'download'])->name('download.index');
     Route::get('/download/index', [SalesController::class, 'printPDF'])->name('sales.print');
@@ -52,10 +54,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/export-sales', [SalesController::class, 'exportSales'])->name('sales.export');
     Route::get('/rekap', [SalesController::class, 'rekap'])->name('sales.rekap');
     Route::get('/berita', [SalesController::class, 'berita'])->name('sales.berita');
-        
-        
-    // Route::get('/sales/pdf', [SalesController::class, 'printPDF'])->name('sales.printPDF');
 
+    
+    Route::get('/sales/create', [SalesController::class, 'create'])->name('sales.create');
+    Route::post('/sales', [SalesController::class, 'store'])->name('sales.store');
+
+
+    Route::get('/check-shipping', [OngkirController::class, 'showForm'])->name('check-shipping-form');
+    Route::get('/get-shipping-rate', [OngkirController::class, 'getShippingRate'])->name('get-shipping-rate');
+
+
+    Route::get('/invoice', function () {
+        return include public_path('invoice/index.php');
+    });
+    
 
 });
 

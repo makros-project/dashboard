@@ -374,8 +374,13 @@ return [
                     'icon' => 'fas fa-fw fa-sticky-note',
 
                 ],
+                [
+                    'text' => 'Aplikasi Invoice',
+                    'url' => 'check-shipping',
+                    'icon' => 'fas fa-fw fa-sticky-note',
+
+                ],
         
-           
                 [
                     'text' => ' Report Mingguan',
                     'url' => 'resi',

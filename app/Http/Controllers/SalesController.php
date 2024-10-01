@@ -7,6 +7,7 @@ use App\Models\Sale;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Response;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -33,16 +34,62 @@ class SalesController extends Controller
      */
     public function create()
     {
-        //
-    }
+        return view('sales.create');    }
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
-    }
+        // Validasi input
+        $request->validate([
+            'no_inv' => 'required|string',
+            'tgl_kirim_fix' => 'required|date',
+            'batch' => 'required|integer',
+            'produk' => 'required|string',
+            'jumlah' => 'required|integer',
+            'nilai_barang' => 'required|integer',
+            'alamat' => 'required|string',
+            'kurir' => 'required|string',
+        ]);
+
+        // Simpan data ke tabel sales
+        Sale::create([
+            'no_inv' => $request->no_inv,
+            'tgl_kirim_fix' => $request->tgl_kirim_fix,
+            'batch' => $request->batch,
+            'produk' => $request->produk,
+            'jumlah' => $request->jumlah,
+            'nilai_barang' => $request->nilai_barang,
+            'alamat' => $request->alamat,
+            'kurir' => $request->kurir,
+        ]);
+
+        return redirect()->route('sales.create')->with('success', 'Penjualan berhasil disimpan.');
+        }
+
+        public function cekOngkir(Request $request)
+        {
+            // Pastikan alamat dan kurir disediakan
+            $request->validate([
+                'alamat' => 'required|string',
+                'kurir' => 'required|string',
+            ]);
+    
+            // Panggil API ongkir (sesuaikan dengan API yang Anda gunakan)
+            // Contoh menggunakan Http client Laravel:
+            $response = Http::post('https://api.ongkir.example.com/cek', [
+                'alamat' => $request->alamat,
+                'kurir' => $request->kurir,
+            ]);
+    
+            if ($response->successful()) {
+                $ongkir = $response->json()['ongkir'];  // sesuaikan dengan struktur API Anda
+                return response()->json(['ongkir' => $ongkir]);
+            }
+    
+            return response()->json(['error' => 'Gagal memeriksa ongkir'], 500);
+        }
 
     /**
      * Display the specified resource.
@@ -68,9 +115,7 @@ class SalesController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+  
     public function update(Request $request, $no_inv)
     {
         // Validasi input dari request
@@ -88,6 +133,44 @@ class SalesController extends Controller
         // Redirect dengan pesan sukses
         return redirect()->route('sales.index')->with('success', 'Data berhasil diperbarui.');
     }
+
+
+    public function batalfix(Request $request, $no_inv)
+        {
+        // Validasi input dari request
+        $validatedData = $request->validate([
+            'tgl_kirim_fix' => 'required|date',
+            'batch' => 'required|integer',
+        ]);
+
+        // Cari Sale berdasarkan no_inv, bukan id
+        $sale = Sale::where('no_inv', $no_inv)->firstOrFail();
+
+        // Update record dengan data yang sudah divalidasi
+        $sale->update($validatedData);
+
+        // Redirect dengan pesan sukses
+        return redirect()->route('sales.index')->with('success', 'Data berhasil diperbarui.');
+
+
+    //       // Validasi input dari request
+    //     $validatedData = $request->validate([
+    //         'tgl_kirim_fix' => 'required|date',
+    //         'batch' => 'required|integer',
+    //     ]);
+    
+    //     // Cari Sale berdasarkan no_inv, bukan id
+    //     $sale = Sale::where('no_inv', $no_inv)->firstOrFail();
+    // dd($sale);
+    //     // Update record dengan data yang sudah divalidasi
+    //     $sale->update($validatedData);
+    
+    //         // Redirect dengan pesan sukses
+    //         return redirect()->route('sales.update')->with('success', 'Transaksi berhasil dibatalkan.');
+        }
+
+        
+
     
     /**
      * Remove the specified resource from storage.
@@ -257,5 +340,48 @@ class SalesController extends Controller
                   ->get();
              
         return view('sales.berita', compact('kurir','sales','sales2', 'tgl_kirim_fix', 'batch'));
+    }
+
+
+
+
+     // Fungsi untuk menangani permintaan dari Select2
+    public function getDestinationData(Request $request)
+    {
+        $search = $request->input('searchTerm');
+
+        // Query data dari database sesuai dengan input search term
+        $results = DB::table('tb_indonesia')
+            ->where('Provinsi', 'like', "%{$search}%")
+            ->orWhere('Kabupaten', 'like', "%{$search}%")
+            ->orWhere('Kecamatan', 'like', "%{$search}%")
+            ->orWhere('KodePos', 'like', "%{$search}%")
+            ->limit(6)
+            ->get();
+
+        $data = [];
+        foreach ($results as $result) {
+            // Panggilan ke API eksternal untuk mendapatkan ongkir
+            $get_kecamatan_id = Http::get("https://sandbox-api.ptncs.com/bot/getkecid/ciwideyfooddemo/demo", [
+                'provinsi' => str_replace(" ", "%20", $result->Provinsi),
+                'kabupaten' => str_replace(" ", "%20", $result->Kabupaten),
+                'kecamatan' => str_replace(" ", "%20", $result->Kecamatan),
+            ])->json();
+
+            $get_ongkir = Http::get("https://sandbox-api.ptncs.com/bot/publishrate/ciwideyfooddemo/demo", [
+                'origin' => 327322,
+                'destination' => $get_kecamatan_id['data'][0]['KecID'],
+                'weight' => 1
+            ])->json();
+
+            foreach ($get_ongkir['data'] as $ongkir) {
+                $data[] = [
+                    "id" => "{$result->Provinsi}--{$result->Kabupaten}--{$result->Kecamatan}--{$result->KodePos}--{$ongkir['ServiceCode']}--" . ($ongkir['TotalPrice']+1000) . "--{$ongkir['Etd']} Hari",
+                    "text" => "{$result->Provinsi}, {$result->Kabupaten}, {$result->Kecamatan}, {$result->KodePos}, {$ongkir['ServiceCode']} TF = " . number_format($ongkir['TotalPrice']+1000) . " {$ongkir['Etd']} Hari"
+                ];
+            }
+        }
+
+        return response()->json($data);
     }
 }
